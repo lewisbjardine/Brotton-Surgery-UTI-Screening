@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
   <meta charset="UTF-8" />
-  <title>Brotton Surgery – UTI Screening for Reception Staff</title>
+  <title>Brotton Surgery – UTI Screening (Reception)</title>
   <meta name="viewport" content="width=device-width, initial-scale=1" />
 
   <style>
@@ -54,7 +54,7 @@
       margin-bottom: 1rem;
       box-shadow: 0 1px 3px rgba(15, 23, 42, 0.1);
     }
-    .card.section-hidden {
+    .section-hidden {
       display: none;
     }
 
@@ -62,7 +62,7 @@
       display: flex;
       flex-wrap: wrap;
       gap: 0.5rem;
-      margin-top: 0.5rem;
+      margin-top: 0.75rem;
     }
     button {
       cursor: pointer;
@@ -80,27 +80,6 @@
     button:disabled {
       opacity: 0.6;
       cursor: not-allowed;
-    }
-
-    .pill {
-      display: inline-block;
-      border-radius: 999px;
-      padding: 0.15rem 0.55rem;
-      font-size: 0.8rem;
-      border: 1px solid #d1d5db;
-      margin-right: 0.35rem;
-      margin-top: 0.25rem;
-      background: #f9fafb;
-    }
-    .pill.alert {
-      border-color: #b91c1c;
-      color: #b91c1c;
-      background: #fef2f2;
-    }
-    .pill.ok {
-      border-color: #047857;
-      color: #047857;
-      background: #ecfdf5;
     }
 
     .notice {
@@ -125,13 +104,29 @@
       color: #111827;
     }
 
-    label {
-      display: block;
+    .small {
+      font-size: 0.85rem;
+      color: #e5e7eb;
+      margin-top: 0.25rem;
+    }
+    .small-dark {
+      font-size: 0.85rem;
+      color: #4b5563;
+      margin-top: 0.35rem;
+    }
+
+    .checkbox-list label {
+      display: flex;
+      align-items: flex-start;
+      gap: 0.4rem;
       margin: 0.25rem 0;
       font-size: 0.95rem;
     }
+    .checkbox-list input[type="checkbox"] {
+      margin-top: 0.15rem;
+    }
+
     input[type="text"],
-    input[type="number"],
     textarea,
     select {
       width: 100%;
@@ -145,18 +140,6 @@
     textarea {
       min-height: 80px;
       resize: vertical;
-    }
-    .small {
-      font-size: 0.85rem;
-      color: #4b5563;
-    }
-    .checkbox-list label {
-      display: flex;
-      align-items: flex-start;
-      gap: 0.4rem;
-    }
-    .checkbox-list input[type="checkbox"] {
-      margin-top: 0.15rem;
     }
 
     .summary-box {
@@ -175,7 +158,7 @@
     .footer-text {
       font-size: 0.8rem;
       color: #6b7280;
-      margin-top: 1rem;
+      margin-top: 0.75rem;
     }
 
     @media (max-width: 640px) {
@@ -192,77 +175,49 @@
 <div class="app">
   <header>
     <h1>UTI Screening Helper – Reception</h1>
+    <p>
+      For <strong>non-clinical reception/admin staff</strong> taking calls about possible urine infections.
+      This tool supports – but does not replace – clinical judgement or local emergency policy.
+    </p>
     <p class="small">
-      For <strong>admin/reception staff</strong> answering calls about possible urine infections.  
-      This tool supports – but does not replace – clinical judgement or local emergency policies.
+      Do not enter patient names, dates of birth, or phone numbers here.  
+      Reception should already have the patient record open in the clinical system.
     </p>
   </header>
 
-  <!-- HOME / PATIENT TYPE SELECTION -->
+  <!-- STEP 1 – PATIENT GROUP -->
   <section id="home" class="card">
     <h2>Step 1 – Who is the patient?</h2>
-    <p>Ask the caller who the problem is for and choose the best match below.</p>
+    <p>Ask who the problem is for and choose the best match below.</p>
+
     <div class="btn-row">
-      <button onclick="selectPatientType('adult_under65_female')">
+      <button onclick="choosePatientType('adult_under65_female')">
         Adult woman under 65 (not pregnant, no catheter)
       </button>
-      <button onclick="selectPatientType('adult_over65_or_catheter')">
+      <button onclick="choosePatientType('adult_over65_or_catheter')">
         Adult 65 or over, or any adult with a catheter
       </button>
-      <button onclick="selectPatientType('adult_pregnant')">
+      <button onclick="choosePatientType('adult_pregnant')">
         Pregnant adult (any age)
       </button>
-      <button onclick="selectPatientType('adult_male')">
+      <button onclick="choosePatientType('adult_male')">
         Adult man (no catheter, not already covered above)
       </button>
-      <button onclick="selectPatientType('child')">
+      <button onclick="choosePatientType('child')">
         Child or young person (under 16)
       </button>
     </div>
 
-    <div class="notice info" style="margin-top: 0.75rem;">
-      <strong>Important:</strong> If at any point the patient seems very unwell, confused, 
-      or you are worried they may be seriously ill, stop the questions and follow practice 
-      emergency procedures (for example, speak to the duty doctor immediately or call 999).
-    </div>
-  </section>
-
-  <!-- SHARED – BASIC DETAILS -->
-  <section id="details-section" class="card section-hidden">
-    <h2>Step 2 – Basic details</h2>
-    <label>
-      Patient full name
-      <input id="patient-name" type="text" autocomplete="off">
-    </label>
-    <label>
-      Date of birth (or age if preferred)
-      <input id="patient-dob-age" type="text" autocomplete="off" placeholder="e.g. 14/02/1978 or 47 years">
-    </label>
-    <label>
-      Who is calling?
-      <select id="caller-relation">
-        <option value="">Select one</option>
-        <option value="patient">The patient themselves</option>
-        <option value="parent">Parent or guardian</option>
-        <option value="partner_relative">Partner / family member</option>
-        <option value="carer">Carer</option>
-        <option value="other">Other</option>
-      </select>
-    </label>
-    <label>
-      Best contact phone number
-      <input id="contact-number" type="text" autocomplete="off">
-    </label>
-    <p class="small">
-      ✏️ Reception note only – do not read this out:  
-      “Use the usual demographic checks in the clinical system to confirm you’re on the right patient.”
+    <p class="small-dark">
+      If at any point the patient seems very unwell, confused, or you are worried they may be seriously ill,  
+      follow your practice’s emergency procedure straight away (duty GP / 999) – do not rely on this tool.
     </p>
   </section>
 
-  <!-- SHARED – SEPSIS SCREEN -->
+  <!-- STEP 2 – SEPSIS SCREEN -->
   <section id="sepsis-section" class="card section-hidden">
-    <h2>Step 3 – Check for signs of serious illness (sepsis screen)</h2>
-    <p><strong>Say to the caller:</strong> “I’m going to ask a few quick questions to check for any serious warning signs.”</p>
+    <h2>Step 2 – Check for serious illness (sepsis screen)</h2>
+    <p><strong>Say:</strong> “I’m going to ask a few quick questions to check for any serious warning signs.”</p>
 
     <div class="checkbox-list">
       <label><input type="checkbox" class="sepsis-check" value="very_unwell">
@@ -289,17 +244,18 @@
     </div>
 
     <div id="sepsis-alert" class="notice neutral">
-      If you tick any of these, stop this tool and follow local emergency policy (e.g. speak to the duty GP immediately or call 999).
+      If you tick any of these, stop and follow local emergency policy (duty clinician / 999).
     </div>
 
     <div class="btn-row">
-      <button class="secondary" onclick="markSepsisClear()">No red flag signs – continue</button>
+      <button onclick="goToSymptomsStep()">Next – go to urine symptoms</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- ADULT WOMAN <65 -->
+  <!-- STEP 3 – SYMPTOMS: ADULT WOMAN <65 -->
   <section id="adult_under65_female-section" class="card section-hidden">
-    <h2>Step 4 – Symptoms (adult woman under 65, not pregnant, no catheter)</h2>
+    <h2>Step 3 – Symptoms (adult woman under 65, not pregnant, no catheter)</h2>
 
     <p><strong>Ask:</strong> “Can you tell me what problems you’re having with passing urine?”</p>
 
@@ -332,7 +288,7 @@
       </label>
     </div>
 
-    <h3>Possible kidney infection (pyelonephritis) – ask:</h3>
+    <h3>Possible kidney infection – ask:</h3>
     <div class="checkbox-list">
       <label><input type="checkbox" class="pyelo" value="kidney_pain">
         Pain in the back or side, under the ribs (where the kidneys are)
@@ -356,7 +312,7 @@
       <select id="wu65-pregnant">
         <option value="">Select</option>
         <option value="no">No</option>
-        <option value="yes">Yes – stop and choose “Pregnant adult” at the start</option>
+        <option value="yes">Yes – should be on pregnant pathway</option>
         <option value="unsure">Not sure</option>
       </select>
     </label>
@@ -376,21 +332,20 @@
     </label>
 
     <div class="btn-row">
-      <button onclick="generateSummary()">Step 5 – Create summary and advice</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button onclick="goToAdviceStep()">Next – what to say to the caller</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- ADULT 65+ OR CATHETER -->
+  <!-- STEP 3 – SYMPTOMS: ADULT 65+ OR CATHETER -->
   <section id="adult_over65_or_catheter-section" class="card section-hidden">
-    <h2>Step 4 – Symptoms (adult 65+ or any adult with a catheter)</h2>
+    <h2>Step 3 – Symptoms (adult 65+ or any adult with a catheter)</h2>
 
     <p>
-      For older adults and people with catheters, urine tests and vague symptoms can be misleading.  
-      Focus on new local urinary symptoms and how unwell they seem.  [oai_citation:0‡elearning.rcgp.org.uk](https://elearning.rcgp.org.uk/pluginfile.php/172235/mod_book/chapter/466/Visual%20summary%20UTI_diagnostic_flowchart_NICE-October_2020%20Gateway%20approved_O65%20TARGET.pdf?utm_source=chatgpt.com)
+      For older adults and people with catheters, focus on <strong>new</strong> urinary symptoms and how unwell they seem.
     </p>
 
-    <h3>Local urinary symptoms – ask if these are new or worse:</h3>
+    <h3>Local urinary symptoms – are these new or worse?</h3>
     <div class="checkbox-list">
       <label><input type="checkbox" class="symptom-o65" value="dysuria">
         Burning, stinging or pain when passing urine
@@ -450,18 +405,17 @@
     </label>
 
     <div class="btn-row">
-      <button onclick="generateSummary()">Step 5 – Create summary and advice</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button onclick="goToAdviceStep()">Next – what to say to the caller</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- PREGNANT ADULT -->
+  <!-- STEP 3 – SYMPTOMS: PREGNANT ADULT -->
   <section id="adult_pregnant-section" class="card section-hidden">
-    <h2>Step 4 – Symptoms (pregnant adult)</h2>
+    <h2>Step 3 – Symptoms (pregnant adult)</h2>
 
-    <p><strong>Note for reception:</strong> Pregnancy with urine symptoms usually needs same-day clinical review 
-      or advice, even if mild.  [oai_citation:1‡elearning.rcgp.org.uk](https://elearning.rcgp.org.uk/pluginfile.php/172235/mod_book/chapter/466/Visual%20summary%20UTI_diagnostic_flowchart_NICE-October_2020%20Gateway%20approved_O65%20TARGET.pdf?utm_source=chatgpt.com)
-    </p>
+    <p><strong>Note for reception:</strong> Pregnancy with urine symptoms usually needs same-day clinical review
+      and a urine sample.</p>
 
     <h3>Pregnancy details</h3>
     <label>How many weeks pregnant are they (if known)?
@@ -511,18 +465,17 @@
     </label>
 
     <div class="btn-row">
-      <button onclick="generateSummary()">Step 5 – Create summary and advice</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button onclick="goToAdviceStep()">Next – what to say to the caller</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- ADULT MALE -->
+  <!-- STEP 3 – SYMPTOMS: ADULT MALE -->
   <section id="adult_male-section" class="card section-hidden">
-    <h2>Step 4 – Symptoms (adult man, no catheter)</h2>
+    <h2>Step 3 – Symptoms (adult man, no catheter)</h2>
 
-    <p><strong>Note for reception:</strong> UTIs are less common in men and usually need clinical review 
-      and urine testing.  [oai_citation:2‡elearning.rcgp.org.uk](https://elearning.rcgp.org.uk/pluginfile.php/172235/mod_book/chapter/466/Visual%20summary%20UTI_diagnostic_flowchart_NICE-October_2020%20Gateway%20approved_O65%20TARGET.pdf?utm_source=chatgpt.com)
-    </p>
+    <p><strong>Note for reception:</strong> UTIs are less common in men and usually need clinical review
+      and a urine test.</p>
 
     <h3>Urinary symptoms</h3>
     <div class="checkbox-list">
@@ -556,18 +509,17 @@
     </label>
 
     <div class="btn-row">
-      <button onclick="generateSummary()">Step 5 – Create summary and advice</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button onclick="goToAdviceStep()">Next – what to say to the caller</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- CHILD -->
+  <!-- STEP 3 – SYMPTOMS: CHILD -->
   <section id="child-section" class="card section-hidden">
-    <h2>Step 4 – Symptoms (child or young person under 16)</h2>
+    <h2>Step 3 – Symptoms (child or young person under 16)</h2>
 
-    <p><strong>Note:</strong> Children with possible urine infection often need urine testing and 
-      clinical review. Younger children, or those who are very unwell, may need same-day assessment.  [oai_citation:3‡GOV.UK](https://assets.publishing.service.gov.uk/media/5beac5a3ed915d6a283ef9f9/Report_of_UTI_diagnostic_flowchart_public_consultation_final_12.11.18.pdf?utm_source=chatgpt.com)
-    </p>
+    <p><strong>Note:</strong> Children with possible urine infection usually need urine testing and
+      clinical review.</p>
 
     <h3>Ask the parent/carer:</h3>
     <label>Child’s age
@@ -603,185 +555,389 @@
     </label>
 
     <div class="btn-row">
-      <button onclick="generateSummary()">Step 5 – Create summary and advice</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button onclick="goToAdviceStep()">Next – what to say to the caller</button>
+      <button class="secondary" onclick="resetAndGoHome()">Cancel and start again</button>
     </div>
   </section>
 
-  <!-- SUMMARY / OUTPUT -->
-  <section id="summary-section" class="card section-hidden">
-    <h2>Step 5 – Summary for the clinical system</h2>
-
+  <!-- STEP 4 – ADVICE TO CALLER -->
+  <section id="advice-section" class="card section-hidden">
+    <h2>Step 4 – Suggested wording to the caller</h2>
     <p>
-      This text is designed to be pasted into the <strong>admin</strong> or <strong>consultation</strong> 
-      entry in EMIS / SystmOne / Vision. Reception staff: please read the suggested closing message 
-      to the caller.
+      Reception: you can use or adapt this wording to close the call.
+      Once you have finished speaking to the caller, go to the next step to copy the GP summary.
     </p>
 
-    <div class="btn-row" style="margin-bottom: 0.5rem;">
+    <div id="advice-text" class="notice info"></div>
+
+    <div class="btn-row">
+      <button onclick="goToSummaryStep()">Next – clinical summary for GP</button>
+      <button class="secondary" onclick="resetAndGoHome()">Start again</button>
+    </div>
+  </section>
+
+  <!-- STEP 5 – CLINICAL SUMMARY -->
+  <section id="summary-section" class="card section-hidden">
+    <h2>Step 5 – Clinical summary for the GP record</h2>
+    <p>
+      Reception: copy this text into the clinical system (e.g. admin note / consultation entry)
+      after you have finished the call.
+    </p>
+
+    <div class="btn-row">
       <button onclick="copySummary()">Copy summary to clipboard</button>
-      <button class="secondary" onclick="goHome()">Start again</button>
+      <button class="secondary" onclick="resetAndGoHome()">New call</button>
     </div>
 
-    <h3>Clinical summary (for GP record)</h3>
+    <h3>Text to paste into SystmOne / EMIS / Vision</h3>
     <div id="summary-text" class="summary-box"></div>
 
-    <h3>Suggested wording to the caller</h3>
-    <div id="closing-script" class="notice info"></div>
-
     <p class="footer-text">
-      Based on UK UTI diagnostic quick reference tools for primary care, adapted for reception use.  [oai_citation:4‡GOV.UK](https://www.gov.uk/government/publications/urinary-tract-infection-diagnosis/diagnosis-of-urinary-tract-infections-quick-reference-tools-for-primary-care?utm_source=chatgpt.com)
+      This note contains no patient-identifiable information.  
+      It assumes identity has already been confirmed in the clinical system by reception.
     </p>
   </section>
-
 </div>
 
 <script>
   let currentPatientType = null;
   let sepsisFlagged = false;
-  let sepsisCleared = false;
 
-  function hideAllFlowSections() {
-    const ids = [
-      "details-section",
-      "sepsis-section",
-      "adult_under65_female-section",
-      "adult_over65_or_catheter-section",
-      "adult_pregnant-section",
-      "adult_male-section",
-      "child-section",
-      "summary-section"
-    ];
+  function showSections(ids) {
+    const sections = document.querySelectorAll("section.card");
+    sections.forEach(sec => sec.classList.add("section-hidden"));
     ids.forEach(id => {
-      document.getElementById(id).classList.add("section-hidden");
+      const el = document.getElementById(id);
+      if (el) el.classList.remove("section-hidden");
     });
+    window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
-  function goHome() {
+  function resetFormFields() {
+    document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
+    document.querySelectorAll("input[type='text'], textarea, select").forEach(el => el.value = "");
+    document.getElementById("advice-text").innerText = "";
+    document.getElementById("summary-text").innerText = "";
+    const sepsisAlert = document.getElementById("sepsis-alert");
+    if (sepsisAlert) {
+      sepsisAlert.className = "notice neutral";
+      sepsisAlert.innerText = "If you tick any of these, stop and follow local emergency policy (duty clinician / 999).";
+    }
+  }
+
+  function resetAndGoHome() {
     currentPatientType = null;
     sepsisFlagged = false;
-    sepsisCleared = false;
-    // Reset checkboxes & text inputs
-    document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
-    document.querySelectorAll("input[type='text'], input[type='number'], textarea").forEach(el => el.value = "");
-    document.querySelectorAll("select").forEach(el => el.value = "");
-    document.getElementById("sepsis-alert").className = "notice neutral";
-    document.getElementById("sepsis-alert").innerText =
-      "If you tick any of these, stop this tool and follow local emergency policy (e.g. speak to the duty GP immediately or call 999).";
-
-    hideAllFlowSections();
-    document.getElementById("home").classList.remove("section-hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    resetFormFields();
+    showSections(["home"]);
   }
 
-  function selectPatientType(type) {
+  function choosePatientType(type) {
     currentPatientType = type;
-    hideAllFlowSections();
-    document.getElementById("home").classList.add("section-hidden");
-    document.getElementById("details-section").classList.remove("section-hidden");
-    document.getElementById("sepsis-section").classList.remove("section-hidden");
-    document.getElementById(type + "-section").classList.remove("section-hidden");
-    window.scrollTo({ top: 0, behavior: "smooth" });
+    sepsisFlagged = false;
+    resetFormFields();
+    showSections(["sepsis-section"]);
   }
 
-  // Sepsis handling
+  // Track sepsis selection for summary + warning banner
   document.addEventListener("change", function (e) {
     if (e.target.classList.contains("sepsis-check")) {
       const anyTicked = Array.from(document.querySelectorAll(".sepsis-check"))
         .some(cb => cb.checked);
       sepsisFlagged = anyTicked;
       const alertBox = document.getElementById("sepsis-alert");
+      if (!alertBox) return;
       if (anyTicked) {
         alertBox.className = "notice warning";
         alertBox.innerHTML =
-          "<strong>Action now:</strong> One or more red flag signs selected. " +
-          "Stop this tool and follow local emergency procedure – " +
-          "speak to the duty clinician immediately and/or call 999 as per practice policy.";
+          "<strong>Red flag signs selected.</strong> Stop and follow local emergency policy – " +
+          "speak to the duty clinician and/or call 999 as appropriate. " +
+          "Only continue if a clinician tells you it is appropriate.";
       } else {
         alertBox.className = "notice neutral";
         alertBox.innerText =
-          "If you tick any of these, stop this tool and follow local emergency policy (e.g. speak to the duty GP immediately or call 999).";
+          "If you tick any of these, stop and follow local emergency policy (duty clinician / 999).";
       }
     }
   });
 
-  function markSepsisClear() {
-    sepsisCleared = true;
-    if (sepsisFlagged) {
-      alert("Warning: you have red flag signs ticked. Do NOT continue – follow emergency procedure.");
-    } else {
-      alert("No red flag signs recorded. Continue with the UTI questions.");
+  function goToSymptomsStep() {
+    if (!currentPatientType) {
+      alert("Please choose the patient group first.");
+      return;
     }
+    if (sepsisFlagged) {
+      const ok = confirm(
+        "You have selected one or more red flag signs.\n\n" +
+        "You should follow your practice emergency policy (duty clinician / 999) before continuing.\n\n" +
+        "Only press OK if a clinician has advised you to carry on using this form."
+      );
+      if (!ok) return;
+    }
+    showSections([currentPatientType + "-section"]);
   }
 
   function getCheckedValues(selector) {
     return Array.from(document.querySelectorAll(selector + ":checked")).map(cb => cb.value);
   }
 
-  function buildSummaryForCurrentPath() {
-    const name = document.getElementById("patient-name").value.trim() || "Unknown name";
-    const dobAge = document.getElementById("patient-dob-age").value.trim() || "Not recorded";
-    const callerRelation = document.getElementById("caller-relation").value || "unspecified";
-    const phone = document.getElementById("contact-number").value.trim() || "Not recorded";
-
-    const sepsisTicks = getCheckedValues(".sepsis-check");
-    let sepsisLine = "Sepsis screen: no red flag features reported.";
-    if (sepsisTicks.length > 0) {
-      sepsisLine = "Sepsis screen: RED FLAG features reported (" + sepsisTicks.join(", ") + "). " +
-                   "Reception advised to follow emergency procedure (duty clinician/999).";
+  function determineUrinePlan() {
+    // If red flag / sepsis, we don't request a sample via this tool.
+    if (sepsisFlagged) {
+      return {
+        plan: "none",
+        reason: "Red flag features – emergency pathway; urine sample decision left to clinician."
+      };
     }
 
-    let lines = [];
-    lines.push("Admin UTI screening call (reception tool)");
-    lines.push("Patient: " + name + " (DOB/age: " + dobAge + ")");
-    lines.push("Caller: " + callerRelation + "; Contact number: " + phone);
-    lines.push(sepsisLine);
+    switch (currentPatientType) {
+      case "adult_under65_female": {
+        const all = getCheckedValues(".symptom-wu65");
+        const keySet = ["dysuria", "new_nocturia", "cloudy_urine"];
+        const key = all.filter(v => keySet.includes(v));
+        const pyelo = getCheckedValues(".pyelo");
+        const recurrent = (document.getElementById("wu65-recurrent").value || "").toLowerCase();
+        const hasBlood = all.includes("visible_blood");
+
+        if (pyelo.length > 0 || hasBlood || recurrent === "yes") {
+          return {
+            plan: "required",
+            reason: "Higher-risk features (kidney infection symptoms, visible blood in urine, or recent/recurrent UTI)."
+          };
+        } else if (key.length < 2) {
+          return {
+            plan: "recommended",
+            reason: "Fewer than two key lower UTI symptoms – urine sample helps confirm diagnosis."
+          };
+        } else {
+          return {
+            plan: "none",
+            reason: "Typical lower UTI pattern in non-pregnant woman under 65 with ≥2 key symptoms."
+          };
+        }
+      }
+      case "adult_male": {
+        return {
+          plan: "required",
+          reason: "Lower urinary symptoms in a man – guideline practice is to send urine for culture."
+        };
+      }
+      case "adult_pregnant": {
+        return {
+          plan: "required",
+          reason: "UTI symptoms in pregnancy – urine testing required in pregnancy."
+        };
+      }
+      case "adult_over65_or_catheter": {
+        const symptoms = getCheckedValues(".symptom-o65");
+        const hasBlood = symptoms.includes("visible_blood");
+        const hasCatheterIssue =
+          symptoms.includes("catheter_block") || symptoms.includes("catheter_change");
+
+        if (hasBlood || hasCatheterIssue) {
+          return {
+            plan: "required",
+            reason: "Visible blood or catheter problem with urinary symptoms."
+          };
+        } else if (symptoms.length > 0) {
+          return {
+            plan: "recommended",
+            reason: "New urinary symptoms in ≥65 / catheter – urine sample helpful to guide treatment."
+          };
+        } else {
+          return {
+            plan: "none",
+            reason: "No clear new urinary symptoms recorded."
+          };
+        }
+      }
+      case "child": {
+        return {
+          plan: "required",
+          reason: "Child with possible UTI – urine testing usually required for diagnosis."
+        };
+      }
+      default:
+        return {
+          plan: "none",
+          reason: "Pathway not selected."
+        };
+    }
+  }
+
+  function buildSampleAdvice(urinePlan, isChild) {
+    const plan = urinePlan.plan;
+    if (plan === "required") {
+      if (isChild) {
+        return "\n\nBecause of your child's symptoms, we would like you to bring a urine sample from your child to the surgery today. " +
+               "If you have a sample bottle at home, please use that; if not, you can collect one from reception as soon as you can.";
+      } else {
+        return "\n\nBecause of the symptoms you have described, we would like you to bring a urine sample to the surgery today. " +
+               "Please collect a fresh mid-stream sample in a clean sample bottle and hand it in at reception as soon as you can.";
+      }
+    } else if (plan === "recommended") {
+      if (isChild) {
+        return "\n\nIt would be very helpful if you could bring a urine sample from your child to the surgery today, " +
+               "so the clinician can check for infection.";
+      } else {
+        return "\n\nIt would be very helpful if you could bring a urine sample to the surgery today, " +
+               "so the clinician can check for infection.";
+      }
+    } else {
+      // none
+      return "\n\nThe clinician may still ask for a urine sample later, but you do not need to bring one in immediately unless we contact you again.";
+    }
+  }
+
+  function buildClosingScript(urinePlan) {
+    if (sepsisFlagged) {
+      return (
+        "Because you have described some warning signs that can suggest a serious infection, " +
+        "we are treating this as urgent.\n\n" +
+        "Please stay by your phone. We will speak to the duty clinician straight away. " +
+        "If you feel the patient is getting worse before we call you back – especially if " +
+        "they are very drowsy, confused, struggling to breathe, or their skin looks blue or mottled – " +
+        "please call 999 for an ambulance."
+      );
+    }
+
+    const isChild = currentPatientType === "child";
+    const sampleText = buildSampleAdvice(urinePlan, isChild);
+
+    switch (currentPatientType) {
+      case "adult_under65_female":
+        return (
+          "Thank you for answering those questions.\n\n" +
+          "I will pass this information to the clinician so they can decide the best next step, " +
+          "which may include a prescription and/or a review appointment. Please keep your phone with you – " +
+          "we will let you know the clinician's plan." +
+          sampleText +
+          "\n\nIf your symptoms suddenly get much worse, if you develop severe pain in your back under the ribs, " +
+          "start vomiting, or feel very unwell, please contact us urgently or call NHS 111/999 as appropriate."
+        );
+      case "adult_over65_or_catheter":
+        return (
+          "Thank you for answering those questions.\n\n" +
+          "I will pass this information to the clinician so they can review it and decide what to do next. " +
+          "That may include arranging a phone call, an appointment or a urine test. Please keep the phone " +
+          "with you so we can reach you." +
+          sampleText +
+          "\n\nIf they become much more confused, very drowsy, very short of breath, stop passing urine, " +
+          "or you are very worried they are seriously unwell, please contact us urgently or call 999."
+        );
+      case "adult_pregnant":
+        return (
+          "Thank you for answering those questions.\n\n" +
+          "Because you are pregnant and have urine symptoms, I will make sure a clinician reviews this " +
+          "today and decides on the next step – this may include a same-day appointment and treatment." +
+          sampleText +
+          "\n\nIf you develop severe pain in your back under the ribs, start vomiting, feel very unwell, " +
+          "or have any concerns about your pregnancy, call us urgently or phone NHS 111/999 as appropriate."
+        );
+      case "adult_male":
+        return (
+          "Thank you for answering those questions.\n\n" +
+          "I will pass this information to a clinician so they can decide what needs to happen next – " +
+          "this usually includes a review and a urine test. Please keep your phone with you " +
+          "so we can let you know the plan." +
+          sampleText +
+          "\n\nIf the pain becomes severe, you see a lot of blood in the urine, or you feel very unwell, " +
+          "please contact us urgently or call NHS 111/999 as appropriate."
+        );
+      case "child":
+        return (
+          "Thank you for answering those questions.\n\n" +
+          "I will pass this information to a clinician so they can decide on the best next step – " +
+          "this may include a same-day review and treatment, depending on how your child is." +
+          sampleText +
+          "\n\nIf your child becomes very drowsy, difficult to wake, has breathing problems, " +
+          "a rash that does not fade with a glass, or you are very worried they are seriously unwell, " +
+          "please seek urgent help via 999 or A&E."
+        );
+      default:
+        return (
+          "Thank you for your call.\n\n" +
+          "We will pass this information to a clinician who will review it and decide on the next step. " +
+          "Please keep your phone with you so we can let you know their plan."
+        );
+    }
+  }
+
+  function buildSummaryForCurrentPath(urinePlan) {
+    const lines = [];
+
+    lines.push("Admin UTI screening call (reception tool).");
+    lines.push("Patient identity confirmed in clinical system by reception before using this tool.");
+    lines.push("No patient-identifiable data recorded on the website.");
+    lines.push("");
+
+    const sepsisTicks = getCheckedValues(".sepsis-check");
+    if (sepsisTicks.length > 0) {
+      lines.push(
+        "Sepsis screen: RED FLAG features reported (" + sepsisTicks.join(", ") +
+        "). Reception advised to follow emergency procedure (duty clinician / 999) before or during this call."
+      );
+    } else {
+      lines.push("Sepsis screen: no red flag features reported by caller.");
+    }
     lines.push("");
 
     switch (currentPatientType) {
       case "adult_under65_female": {
         const keySymptoms = getCheckedValues(".symptom-wu65");
         const pyelo = getCheckedValues(".pyelo");
-        const duration = document.getElementById("wu65-duration").value.trim() || "not stated";
+        const duration = (document.getElementById("wu65-duration").value || "").trim() || "not stated";
         const pregnant = document.getElementById("wu65-pregnant").value || "not recorded";
         const catheter = document.getElementById("wu65-catheter").value || "not recorded";
         const recurrent = document.getElementById("wu65-recurrent").value || "not recorded";
 
-        lines.push("Pathway: Adult woman <65, not pregnant, no catheter.");
+        lines.push("Pathway: Adult woman <65, not pregnant, no catheter (self-reported).");
         lines.push("Duration of urinary symptoms: " + duration + ".");
-        lines.push("Urinary symptoms reported: " + (keySymptoms.length ? keySymptoms.join(", ") : "none of the listed symptoms ticked") + ".");
+        lines.push(
+          "Urinary symptoms reported: " +
+          (keySymptoms.length ? keySymptoms.join(", ") : "none of the listed symptoms ticked") +
+          "."
+        );
         if (pyelo.length) {
           lines.push("Possible kidney infection features: " + pyelo.join(", ") + ".");
         } else {
           lines.push("Possible kidney infection features: none of the listed features ticked.");
         }
-        lines.push("Pregnancy status (self-reported): " + pregnant + ".");
+        lines.push("Pregnancy status (caller report): " + pregnant + ".");
         lines.push("Urinary catheter: " + catheter + ".");
-        lines.push("Recent / recurrent UTI in last 3 months: " + recurrent + ".");
+        lines.push("Recent/recurrent UTI in last 3 months: " + recurrent + ".");
         break;
       }
       case "adult_over65_or_catheter": {
         const symptoms = getCheckedValues(".symptom-o65");
-        const duration = document.getElementById("o65-duration").value.trim() || "not stated";
+        const duration = (document.getElementById("o65-duration").value || "").trim() || "not stated";
         const carehome = document.getElementById("o65-carehome").value || "not recorded";
 
         lines.push("Pathway: Adult ≥65 and/or catheterised adult.");
         lines.push("Duration of symptoms: " + duration + ".");
-        lines.push("New/worse symptoms reported: " + (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") + ".");
+        lines.push(
+          "New/worse symptoms reported: " +
+          (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") +
+          "."
+        );
         lines.push("Care home / regular care involvement: " + carehome + ".");
         break;
       }
       case "adult_pregnant": {
         const symptoms = getCheckedValues(".symptom-preg");
         const pyelo = getCheckedValues(".pyelo");
-        const duration = document.getElementById("preg-duration").value.trim() || "not stated";
-        const weeks = document.getElementById("preg-weeks").value.trim() || "not stated";
-        const complications = document.getElementById("preg-complications").value.trim() || "none reported";
+        const duration = (document.getElementById("preg-duration").value || "").trim() || "not stated";
+        const weeks = (document.getElementById("preg-weeks").value || "").trim() || "not stated";
+        const complications = (document.getElementById("preg-complications").value || "").trim() || "none reported";
 
         lines.push("Pathway: Pregnant adult with urinary symptoms.");
-        lines.push("Gestation (if known): " + weeks + ".");
-        lines.push("Known pregnancy complications: " + complications + ".");
-        lines.push("Urinary symptoms reported: " + (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") + ".");
+        lines.push("Gestation (caller report): " + weeks + ".");
+        lines.push("Known pregnancy complications (caller report): " + complications + ".");
+        lines.push(
+          "Urinary symptoms reported: " +
+          (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") +
+          "."
+        );
         if (pyelo.length) {
           lines.push("Possible kidney infection features: " + pyelo.join(", ") + ".");
         } else {
@@ -792,23 +948,31 @@
       }
       case "adult_male": {
         const symptoms = getCheckedValues(".symptom-male");
-        const duration = document.getElementById("male-duration").value.trim() || "not stated";
+        const duration = (document.getElementById("male-duration").value || "").trim() || "not stated";
         const prostate = document.getElementById("male-prostate").value || "not recorded";
 
-        lines.push("Pathway: Adult man with urinary symptoms.");
-        lines.push("Urinary symptoms reported: " + (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") + ".");
+        lines.push("Pathway: Adult man with urinary symptoms (no indwelling catheter).");
+        lines.push(
+          "Urinary symptoms reported: " +
+          (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") +
+          "."
+        );
         lines.push("Prostate/testicular discomfort: " + prostate + ".");
         lines.push("Duration of symptoms: " + duration + ".");
         break;
       }
       case "child": {
         const symptoms = getCheckedValues(".symptom-child");
-        const duration = document.getElementById("child-duration").value.trim() || "not stated";
-        const age = document.getElementById("child-age").value.trim() || "not stated";
+        const duration = (document.getElementById("child-duration").value || "").trim() || "not stated";
+        const age = (document.getElementById("child-age").value || "").trim() || "not stated";
 
         lines.push("Pathway: Child / young person (<16) with possible UTI.");
-        lines.push("Child age: " + age + ".");
-        lines.push("Symptoms reported: " + (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") + ".");
+        lines.push("Child age (caller report): " + age + ".");
+        lines.push(
+          "Symptoms reported: " +
+          (symptoms.length ? symptoms.join(", ") : "none of the listed symptoms ticked") +
+          "."
+        );
         lines.push("Duration of symptoms: " + duration + ".");
         break;
       }
@@ -817,25 +981,44 @@
     }
 
     lines.push("");
+    // Urine sample summary
+    if (urinePlan.plan === "required") {
+      lines.push(
+        "Urine sample: Reception has asked the patient/parent to provide a urine sample today " +
+        "(reason: " + urinePlan.reason + ")."
+      );
+    } else if (urinePlan.plan === "recommended") {
+      lines.push(
+        "Urine sample: Reception has suggested providing a urine sample today " +
+        "(reason: " + urinePlan.reason + ")."
+      );
+    } else {
+      lines.push(
+        "Urine sample: Not specifically requested during this call via this tool (" +
+        urinePlan.reason + ")."
+      );
+    }
+    lines.push("");
+
     lines.push("Reception action summary:");
     if (sepsisFlagged) {
-      lines.push("- Red flag features present – reception advised to follow emergency policy (duty GP / 999).");
+      lines.push("- Red flag features present – emergency policy triggered (duty clinician / 999 as appropriate).");
     } else {
       switch (currentPatientType) {
         case "adult_under65_female":
-          lines.push("- Adult woman <65 with urinary symptoms. Requires GP or ANP review (phone or face-to-face) today or next available as per duty rota.");
+          lines.push("- Adult woman <65 with urinary symptoms. Requires GP/ANP review according to duty rota.");
           break;
         case "adult_over65_or_catheter":
-          lines.push("- ≥65 / catheterised adult with new symptoms. Requires clinician review. Consider same-day assessment if appears unwell or multiple symptoms.");
+          lines.push("- ≥65 / catheterised adult with new symptoms. Requires clinician review; consider urgency based on how unwell they appear.");
           break;
         case "adult_pregnant":
-          lines.push("- Pregnant with urinary symptoms. Needs same-day clinician review and usually urine sample as per pregnancy UTI guidance.");
+          lines.push("- Pregnant with urinary symptoms. Needs same-day clinician review and urine testing.");
           break;
         case "adult_male":
-          lines.push("- Adult man with urinary symptoms. Requires clinician review and usually urine sample.");
+          lines.push("- Adult man with urinary symptoms. Requires clinician review and usually urine testing.");
           break;
         case "child":
-          lines.push("- Child with possible UTI. Needs clinician review. Timing (same-day vs routine) as per age, fever and how unwell they appear.");
+          lines.push("- Child with possible UTI. Requires clinician review; timing based on age, fever and overall appearance.");
           break;
         default:
           lines.push("- Pathway not selected.");
@@ -843,95 +1026,29 @@
     }
 
     lines.push("");
-    lines.push("This note was generated using the reception UTI screening website.");
+    lines.push("Note generated using the reception UTI screening website.");
 
     return lines.join("\n");
   }
 
-  function buildClosingScript() {
-    if (sepsisFlagged) {
-      return `
-Because you have described some warning signs that can suggest serious infection, 
-we are treating this as urgent.
-
-Please stay by your phone. We will speak to the duty clinician straight away. 
-If you feel the patient is getting worse before we call you back – especially if 
-they are very drowsy, confused, struggling to breathe, or their skin looks blue or 
-mottled – please call 999 for an ambulance.`;
-    }
-
-    switch (currentPatientType) {
-      case "adult_under65_female":
-        return `
-Thank you for answering those questions.
-
-I will pass this information to the clinician today so they can decide the best next step, 
-which may include a prescription and/or a urine sample. Please keep your phone with you – 
-we will let you know the clinician's plan.
-
-If the symptoms suddenly get much worse, if you develop severe pain in your back under the ribs, 
-start vomiting, or feel very unwell, please contact us urgently or call 111/999 as appropriate.`;
-      case "adult_over65_or_catheter":
-        return `
-Thank you for answering those questions.
-
-I will pass this information to the clinician so they can review it and decide what to do next. 
-That may include arranging a phone call, an appointment or a urine test. Please keep the phone 
-with you today so we can reach you.
-
-If they become much more confused, very drowsy, very short of breath, stop passing urine, 
-or you are very worried they are seriously unwell, please contact us urgently or call 999.`;
-      case "adult_pregnant":
-        return `
-Thank you for answering those questions.
-
-Because you are pregnant and have urine symptoms, I will make sure a clinician reviews this 
-today and decides on the next step – this may include a same-day appointment and a urine test. 
-Please keep your phone close by so we can contact you.
-
-If you develop severe pain in your back under the ribs, start vomiting, feel very unwell, 
-or have any concerns about your pregnancy, call us urgently or phone NHS 111 / 999 as appropriate.`;
-      case "adult_male":
-        return `
-Thank you for answering those questions.
-
-I will pass this information to a clinician so they can decide what needs to happen next – 
-this usually includes a review and a possible urine test. Please keep your phone with you 
-so we can let you know the plan.
-
-If the pain becomes severe, you see a lot of blood in the urine, or you feel very unwell, 
-please contact us urgently or call NHS 111 / 999 as appropriate.`;
-      case "child":
-        return `
-Thank you for answering those questions.
-
-I will pass this information to a clinician so they can decide on the best next step – 
-this may include a same-day review and a urine test, depending on how your child is. 
-Please keep your phone with you so we can contact you.
-
-If your child becomes very drowsy, difficult to wake, has breathing problems, 
-a rash that does not fade with a glass, or you are very worried they are seriously unwell, 
-please seek urgent help via 999 or A&E.`;
-      default:
-        return `
-Thank you for your call. We will pass this information to a clinician who will 
-review it and decide on the next step. Please keep your phone with you so we can 
-let you know their plan.`;
-    }
-  }
-
-  function generateSummary() {
+  function goToAdviceStep() {
     if (!currentPatientType) {
-      alert("Please select a patient type first.");
+      alert("Please choose the patient group first.");
       return;
     }
-    const summary = buildSummaryForCurrentPath();
-    const closing = buildClosingScript();
+    const urinePlan = determineUrinePlan();
+    const summary = buildSummaryForCurrentPath(urinePlan);
+    const advice = buildClosingScript(urinePlan);
 
+    document.getElementById("advice-text").innerText = advice;
     document.getElementById("summary-text").innerText = summary;
-    document.getElementById("closing-script").innerText = closing;
-    document.getElementById("summary-section").classList.remove("section-hidden");
-    window.scrollTo({ top: document.getElementById("summary-section").offsetTop - 10, behavior: "smooth" });
+
+    showSections(["advice-section"]);
+  }
+
+  function goToSummaryStep() {
+    // Show both advice and summary, with advice first on the page
+    showSections(["advice-section", "summary-section"]);
   }
 
   async function copySummary() {
@@ -944,8 +1061,8 @@ let you know their plan.`;
     }
   }
 
-  // Start on home
-  goHome();
+  // Initialise on home screen
+  resetAndGoHome();
 </script>
 </body>
 </html>
