@@ -169,6 +169,51 @@
         margin: 0 -0.75rem 0.75rem -0.75rem;
       }
     }
+
+    /* ---- SEPSIS MODAL OVERLAY ---- */
+    #sepsis-modal-overlay {
+      position: fixed;
+      inset: 0;
+      background: rgba(0,0,0,0.55);
+      display: none; /* hidden by default */
+      align-items: center;
+      justify-content: center;
+      z-index: 9999;
+    }
+
+    #sepsis-modal {
+      background: white;
+      border: 4px solid #b91c1c; /* danger red */
+      border-radius: 1rem;
+      padding: 1.4rem 1.2rem;
+      max-width: 420px;
+      text-align: center;
+      box-shadow: 0 0 25px rgba(0,0,0,0.35);
+    }
+
+    #sepsis-modal h2 {
+      margin-top: 0;
+      color: #b91c1c;
+      font-size: 1.5rem;
+      font-weight: 900;
+    }
+
+    #sepsis-modal p {
+      font-size: 1rem;
+      margin-top: 0.75rem;
+      margin-bottom: 1rem;
+    }
+
+    #sepsis-modal button {
+      background: #b91c1c;
+      color: white;
+      border: none;
+      padding: 0.55rem 1.2rem;
+      border-radius: 0.5rem;
+      cursor: pointer;
+      font-size: 1rem;
+      font-weight: 600;
+    }
   </style>
 </head>
 <body>
@@ -180,7 +225,7 @@
       This tool supports – but does not replace – clinical judgement or local emergency policy.
     </p>
     <p class="small">
-      Do not enter patient names, dates of birth, or phone numbers here.  
+      Do not enter patient names, dates of birth, or phone numbers here.<br>
       Reception should already have the patient record open in the clinical system.
     </p>
   </header>
@@ -593,10 +638,24 @@
     <div id="summary-text" class="summary-box"></div>
 
     <p class="footer-text">
-      This note contains no patient-identifiable information.  
+      This note contains no patient-identifiable information.<br>
       It assumes identity has already been confirmed in the clinical system by reception.
     </p>
   </section>
+</div>
+
+<!-- SEPSIS MODAL OVERLAY -->
+<div id="sepsis-modal-overlay">
+  <div id="sepsis-modal">
+    <h2>THINK SEPSIS</h2>
+    <p>
+      One or more symptoms you have selected suggest a possible <strong>serious infection</strong>.<br><br>
+      Please stop and follow your practice emergency procedure.<br>
+      Speak to the duty clinician immediately, or call <strong>999</strong> if appropriate.<br><br>
+      Only continue using this tool if a clinician has told you to.
+    </p>
+    <button onclick="closeSepsisModal()">I Understand – Continue</button>
+  </div>
 </div>
 
 <script>
@@ -616,12 +675,15 @@
   function resetFormFields() {
     document.querySelectorAll("input[type='checkbox']").forEach(cb => cb.checked = false);
     document.querySelectorAll("input[type='text'], textarea, select").forEach(el => el.value = "");
-    document.getElementById("advice-text").innerText = "";
+    document.getElementById("advice-text").innerHTML = "";
     document.getElementById("summary-text").innerText = "";
     const sepsisAlert = document.getElementById("sepsis-alert");
     if (sepsisAlert) {
       sepsisAlert.className = "notice neutral";
-      sepsisAlert.innerText = "If you tick any of these, stop and follow local emergency policy (duty clinician / 999).";
+      sepsisAlert.style.border = "1px solid #e5e7eb";
+      sepsisAlert.style.padding = "0.75rem";
+      sepsisAlert.innerText =
+        "If you tick any of these, stop and follow local emergency policy (duty clinician / 999).";
     }
   }
 
@@ -639,22 +701,44 @@
     showSections(["sepsis-section"]);
   }
 
-  // Track sepsis selection for summary + warning banner
+  // SEPSIS MODAL SYSTEM
+  function openSepsisModal() {
+    document.getElementById("sepsis-modal-overlay").style.display = "flex";
+  }
+
+  function closeSepsisModal() {
+    document.getElementById("sepsis-modal-overlay").style.display = "none";
+  }
+
+  // When any sepsis checkbox changes:
   document.addEventListener("change", function (e) {
     if (e.target.classList.contains("sepsis-check")) {
       const anyTicked = Array.from(document.querySelectorAll(".sepsis-check"))
         .some(cb => cb.checked);
       sepsisFlagged = anyTicked;
+
       const alertBox = document.getElementById("sepsis-alert");
       if (!alertBox) return;
+
       if (anyTicked) {
+        // Update the inline alert panel to show urgency
         alertBox.className = "notice warning";
-        alertBox.innerHTML =
-          "<strong>Red flag signs selected.</strong> Stop and follow local emergency policy – " +
-          "speak to the duty clinician and/or call 999 as appropriate. " +
-          "Only continue if a clinician tells you it is appropriate.";
+        alertBox.style.border = "2px solid #b91c1c";
+        alertBox.style.padding = "1rem";
+        alertBox.innerHTML = `
+          <strong style="font-size:1.1rem; display:block; margin-bottom:0.4rem;">
+            THINK SEPSIS
+          </strong>
+          Serious warning signs selected. You must follow your emergency protocol.
+        `;
+
+        // NOW TRIGGER FULLSCREEN MODAL
+        openSepsisModal();
       } else {
+        // Reset panel when unticked
         alertBox.className = "notice neutral";
+        alertBox.style.border = "1px solid #e5e7eb";
+        alertBox.style.padding = "0.75rem";
         alertBox.innerText =
           "If you tick any of these, stop and follow local emergency policy (duty clinician / 999).";
       }
@@ -767,26 +851,30 @@
 
   function buildSampleAdvice(urinePlan, isChild) {
     const plan = urinePlan.plan;
+
     if (plan === "required") {
       if (isChild) {
-        return "\n\nBecause of your child's symptoms, we would like you to bring a urine sample from your child to the surgery today. " +
+        return "\n\n<b>Because of your child's symptoms, we would like you to bring a urine sample from your child to the surgery today.</b> " +
                "If you have a sample bottle at home, please use that; if not, you can collect one from reception as soon as you can.";
       } else {
-        return "\n\nBecause of the symptoms you have described, we would like you to bring a urine sample to the surgery today. " +
+        return "\n\n<b>Because of the symptoms you have described, we would like you to bring a urine sample to the surgery today.</b> " +
                "Please collect a fresh mid-stream sample in a clean sample bottle and hand it in at reception as soon as you can.";
       }
-    } else if (plan === "recommended") {
+    }
+
+    if (plan === "recommended") {
       if (isChild) {
-        return "\n\nIt would be very helpful if you could bring a urine sample from your child to the surgery today, " +
+        return "\n\n<b>It would be very helpful if you could bring a urine sample from your child to the surgery today,</b> " +
                "so the clinician can check for infection.";
       } else {
-        return "\n\nIt would be very helpful if you could bring a urine sample to the surgery today, " +
+        return "\n\n<b>It would be very helpful if you could bring a urine sample to the surgery today,</b> " +
                "so the clinician can check for infection.";
       }
-    } else {
-      // none
-      return "\n\nThe clinician may still ask for a urine sample later, but you do not need to bring one in immediately unless we contact you again.";
     }
+
+    // plan === "none"
+    return "\n\n<b>You do not need to bring a urine sample right now,</b> " +
+           "but the clinician may still ask for one later if needed.";
   }
 
   function buildClosingScript(urinePlan) {
@@ -1040,7 +1128,8 @@
     const summary = buildSummaryForCurrentPath(urinePlan);
     const advice = buildClosingScript(urinePlan);
 
-    document.getElementById("advice-text").innerText = advice;
+    // Advice includes <b> tags for urine sample bits, so use innerHTML
+    document.getElementById("advice-text").innerHTML = advice.replace(/\n/g, "<br>");
     document.getElementById("summary-text").innerText = summary;
 
     showSections(["advice-section"]);
